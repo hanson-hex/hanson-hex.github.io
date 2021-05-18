@@ -1,0 +1,570 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=&#34;auto&#34;>
+
+
+
+<head>
+  <meta charset="UTF-8">
+  <link rel="apple-touch-icon" sizes="76x76" href="/img/favicon.ico">
+  <link rel="icon" href="/img/favicon.ico">
+  <meta name="viewport"
+        content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="description" content="">
+  <meta name="author" content="RemyHe">
+  <meta name="keywords" content="">
+  
+  <title>linux的前世今生 - hexBlog</title>
+
+  <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/css/bootstrap.min.css" />
+
+
+  <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/github-markdown-css@4.0.0/github-markdown.min.css" />
+  <link  rel="stylesheet" href="/lib/hint/hint.min.css" />
+
+  
+    
+    
+      
+      <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/highlight.js@10.7.0/styles/github-gist.min.css" />
+    
+  
+
+  
+    <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@3.5.7/dist/jquery.fancybox.min.css" />
+  
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1749284_ba1fz6golrf.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_kmeydafke9r.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+<!-- 自定义样式保持在最底部 -->
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    var CONFIG = {"hostname":"example.com","root":"/","version":"1.8.9a","typing":{"enable":true,"typeSpeed":60,"cursorChar":"_","loop":false},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"right","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"copy_btn":true,"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":true,"baidu":null,"google":null,"gtag":null,"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":"9RJgSm5ISmhHWDhfnSkm2Nz4-gzGzoHsz","app_key":"oVYqAPJnDyFT8KFsWzsDJnhx","server_url":"https://9rjgsm5i.lc-cn-n1-shared.com"}}};
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+<meta name="generator" content="Hexo 5.4.0"><link rel="alternate" href="/atom.xml" title="hexBlog" type="application/atom+xml">
+</head>
+
+
+<body>
+  <header style="height: 50vh;">
+    <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand"
+       href="/">&nbsp;<strong>Remy He Blog</strong>&nbsp;</a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/">
+                <i class="iconfont icon-home-fill"></i>
+                首页
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/">
+                <i class="iconfont icon-archive-fill"></i>
+                归档
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/categories/">
+                <i class="iconfont icon-category-fill"></i>
+                分类
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/">
+                <i class="iconfont icon-tags-fill"></i>
+                标签
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/">
+                <i class="iconfont icon-user-fill"></i>
+                关于
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" data-toggle="modal" data-target="#modalSearch">&nbsp;<i
+                class="iconfont icon-search"></i>&nbsp;</a>
+          </li>
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" href="javascript:">&nbsp;<i
+                class="iconfont icon-dark" id="color-toggle-icon"></i>&nbsp;</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+    <div class="banner" id="banner" parallax=true
+         style="background: url('/img/default.png') no-repeat center center;
+           background-size: cover;">
+      <div class="full-bg-img">
+        <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+          <div class="page-header text-center fade-in-up">
+            <span class="h2" id="subtitle" title="linux的前世今生">
+              
+            </span>
+
+            
+              <div class="mt-3">
+  
+  
+    <span class="post-meta">
+      <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+      <time datetime="2019-03-24 16:27" pubdate>
+        2019年3月24日 下午
+      </time>
+    </span>
+  
+</div>
+
+<div class="mt-1">
+  
+    
+    <span class="post-meta mr-2">
+      <i class="iconfont icon-chart"></i>
+      3.8k 字
+    </span>
+  
+
+  
+    
+    <span class="post-meta mr-2">
+      <i class="iconfont icon-clock-fill"></i>
+      
+      
+      40
+       分钟
+    </span>
+  
+
+  
+  
+    
+      <!-- LeanCloud 统计文章PV -->
+      <span id="leancloud-page-views-container" class="post-meta" style="display: none">
+        <i class="iconfont icon-eye" aria-hidden="true"></i>
+        <span id="leancloud-page-views"></span> 次
+      </span>
+    
+  
+</div>
+
+            
+          </div>
+
+          
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="d-none d-lg-block col-lg-2"></div>
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div class="py-5" id="board">
+          <article class="post-content mx-auto">
+            <!-- SEO header -->
+            <h1 style="display: none">linux的前世今生</h1>
+            
+            <div class="markdown-body">
+              <h2 id="引言"><a href="#引言" class="headerlink" title="引言"></a>引言</h2><p>操作系统Operating System，简称OS，港台译作「作业系统」,是管理计算机硬件与软件资源的程序，同时也是计算机系统的核心与基石。<br>日常我们用到的如:</p>
+<p><img src="http://cdn.hexblog.cn/20190527-001.png" srcset="/img/loading.gif" lazyload/><br> <center>微软win10系统</center></p>
+<p><img src="http://cdn.hexblog.cn/20190527-002.jpg" srcset="/img/loading.gif" lazyload/><br> <center>苹果mac的IOS系统</center></p>
+<p><img src="http://cdn.hexblog.cn/20190527-003.png" srcset="/img/loading.gif" lazyload/><br>   <center>谷歌的Android系统</center></p>
+<p>这些操作系统提供了，在其上运行的程序提高基本环境，当大家使用 Google 搜索时，使用微博热搜时，使用taobao购物时，使用微信聊天时，很多人并不知道，支撑这些软件和服务的，是后台成千上万台 Linux服务器，它们时时刻刻都在进行着忙碌的运算和数据处理，确保数据信息在人、软件和硬件之间安全的流淌。可以这么说，世界上大部分软件和服务都运行在 Linux 操作系统之上，神马云计算、大数据、移动互联网，说起来风起云涌，其实没有Linux全得歇菜（微软除外）。</p>
+<h2 id="梦回贝尔实验室"><a href="#梦回贝尔实验室" class="headerlink" title="梦回贝尔实验室"></a>梦回贝尔实验室</h2><p>1965年之前的时候，电脑并不像现在如此烂大街，可不是一般人能碰的起的，除非是军事或者学院的研究机构，而且当时大型主机至多能提供30台终端（30个键盘、显示器)，连接一台电脑，它的使用和维护成本非常之高。<br>为了解决数量不够用的问题，1965年前后由贝尔实验室、麻省理工学院以及 通用电气共同发起了Multics项目，想让大型主机支持300台终端，1969年前后这个项目进度缓慢，资金短缺，贝尔实验室觉得没钱干不下去了，退出了研究。</p>
+<p><img src="http://cdn.hexblog.cn/20190527-004.png" srcset="/img/loading.gif" lazyload/><br> <center>Ken Thompson（左）Dennis Ritchie（右）</center></p>
+<p>当时贝尔实验室中有个叫肯-汤姆逊（Ken Thompson）的人，闲着自己倒腾游戏，编写“星际旅行”(Space Travel)，为了能够上班在一台空闲电脑上玩，就用汇编开发了一个简单的操作系统，这个就是后来的Unix。所你你想想当你上班去干一件件事情的时候，往往结果还不如意，但是凭着兴趣随性往往收获意想不到。如果你关注这个肯-汤姆逊，你会知道他很有名，他除了创造了一个B语言（就是C语言的前身），而且他是plan9操作系统的创造者和开发者之一，2006年汤姆逊进入谷歌，2007年开始和其他几位工程师共同设计的Go语言，另外参加过正则表达式和UTF-8编码的设计，而这些事情凡人做一件也足以载入史册。另外一个很有意思的事情，就是在1969年操作系统Unix诞生的时候，林纳斯-托瓦兹（（Linus Benedict Torvalds））在芬兰呱呱落地。</p>
+<p><img src="http://cdn.hexblog.cn/20190527-005.jpg" srcset="/img/loading.gif" lazyload/><br> <center>Linus Benedict Torvalds</center></p>
+<p>到了1972年的时候，肯-汤姆逊和丹尼-里奇（Dennis Ritchie），用汇编语言去做移植，实在是太苦逼了，两基友在电脑面前互相骂娘。而B语言可以被认为是那个时代的解释型语言，不能直接生成机器码，跨平台性差，难堪大任，为了能够在其他的电脑上也能够运行这个非常棒的Unix操作系统，他们想用高级语言来完成这个第三版，丹尼斯-里奇在B语言的基础上最终设计出了一种新的语言，他取了BCPL的第二个字母作为这种语言的名字，这就是C语言。从此一代语言巨星冉冉升起，40年后依然排在兵器排名榜第一位，怎一个牛字了得！<br>到1973年初，哥俩成功地用C语言，重写了第三版内核，这个时候操作系统修改移植就变得相当的便利，为其普及打下非常坚实基础，Unix 与 C 从此珠联璧合，长相思守，再也无法分离，很快的成为世界的主导，最开始是学术界和大学是其的主要使用者，比如做一些教学，从那个时候逐渐流行起来。<br><img src="http://cdn.hexblog.cn/20190527-006.jpg" srcset="/img/loading.gif" lazyload/></p>
+<center>Andrew S. Tanenbaum</center>
+
+<h2 id="Unix纷争四起"><a href="#Unix纷争四起" class="headerlink" title="Unix纷争四起"></a>Unix纷争四起</h2><p>只不过开始也有了一些法律纠纷，主要是那个AT&amp;T(通用电气)，它企图私有化UNIX,让很多软件开发者很痛心和焦虑。塔能鲍姆(Andrew S. Tanenbaum)教授为了能在课堂上教授学生操作系统运作的实务细节，决定在不使用任何AT&amp;T的源代码前提下，自行开发与Unix兼容的操作系统，以避免版权上的争议。他以小型UNIX（mini-Unix）之意，将它称为Minix。</p>
+<p><img src="http://cdn.hexblog.cn/20190527-007.png" srcset="/img/loading.gif" lazyload/></p>
+<center>Richard Matthew Stallman</center>
+
+<h2 id="伟大的布道者"><a href="#伟大的布道者" class="headerlink" title="伟大的布道者"></a>伟大的布道者</h2><p>同时理查德-斯托曼（Richard Matthew Stallman）出现了。</p>
+<p>搞IT的都知道，这位活着的传奇，自由软件运动的布道者，上图：络腮满面，泡面长发配圆顶礼帽，大肚配罩衫，无一处不荒诞，却也无一处不可爱，正如这位大师级顽童的程序生涯般耐人寻味。</p>
+<p>理查德-斯托曼认为Unix可能是好的操作系统，如果大家能够将所学进行贡献出来，那么这个系统将会更加的优异，他倡导开源，在80年代的大环境下，他要实现一个，自由的，类Unix的操作系统，他这个想法也得到了很多人的认同，并且有一些捐助者支持他这个理想。理查德-斯托曼在1983年创立了这个GNU（GNU’s Not Unix!的递归缩写）项目，计划开发一套与UNIX相互兼容的操作系统，在1985年10月份，他又创立了这个自由软件基金会(Free Software Foundation)，为GNU提供一些法律和一些财务上面的支持，接着他开发了GCC、GDB、GNU Emacs，同时编写了GNU通用公共许可协议（GNU General Public License即GPL），但是由于很多原因，GNU自己的操作系统迟迟没有完成开发。</p>
+<p><img src="http://cdn.hexblog.cn/20190527-008.png" srcset="/img/loading.gif" lazyload/></p>
+<p>那这个内核他有多重要呢？</p>
+<p>首先它是一个系统级别的软件，它是用来管理在其上运行的软件发出的数据IO的输入和输出请求。将这些请求会转译成一个数据处理的指令，交由CPU也就是中央处理器和电脑中其他的电子组件进行处理，是现在操作系统中非常基本的一个部分。Linux许多人都使用它，但它仅仅是你所用这个系统中的一部分，是一个内核，它为运行的其他的程序分配计算机的资源，是很基础的部分，只能在完整的操作系统框架下才能发挥作用，通常Linux就和GNU作系统是一起使用的，而整个系统就是GNU和Linux，所以有时候你能看到名字叫GUN/Linux，所有Linux的发行版，实际上是GUN/Linux的发行版。</p>
+<h2 id="linux之父-林纳斯"><a href="#linux之父-林纳斯" class="headerlink" title="linux之父-林纳斯"></a>linux之父-林纳斯</h2><p>林纳斯的外公是赫尔辛基大学的一位统计学教授，数学家。他有一台Commodore VIC-20计算机，爷子年老眼花，也不愿意打字，外孙小的时候就把林纳斯纳斯放在腿上，让他帮助录入写在纸片上的程序。这种很有场面感的场景一再出现后，李纳斯除了对数学有了初步的认识，同时也把计算机玩的娴熟，10岁的时候，很快他就在外公的指导下开始编写自己的程序。</p>
+<p>我们10岁在干什么，打沙包么？小霸王么？让20多岁才开始编程的同学一入世就差别人十年的身位，除了冷冷的绝望，你还能感受到什么？</p>
+<p><img src="http://cdn.hexblog.cn/20190527-009.png" srcset="/img/loading.gif" lazyload/></p>
+<center>Linus Benedict Torvalds</center>
+
+<p>林纳斯在1989年服了11个月芬兰国家义务兵役期间，就购买了塔能鲍姆所著的教科书《操作系统：设计及实现》及Minix源代码，开始研究操作系统。在他的自传《Just For Fun》中，托瓦兹把这本书描述为“引领我到达新高度的一本书籍”。</p>
+<p>1990年，而林纳斯此时在外公所在的赫尔辛基大学上学，他最初是用汇编语言写了一个英特尔30386CPU处理多任务切换的一个程序。而塔能鲍姆的操作系统Minix由于其用于教学，他不愿意做更多的功能的更新，比如性能问题、内核问题、文件系统问题和终端仿真器等诸多问题，导致一堆工程师和学生在这个作业系统功能上面吐槽满满。林纳斯想既然如此，那我何不自己来改写一个我想要的作业系统？于是基于Minix的灵感，他开始写一些硬件的设备的驱动程序，还有一个很小的文件系统，这样0.01版本的就出来了。但是它只是具有个操作系统内核勉强的雏形。但又不能运行，因为他必须要在有Minix的机器上编译之后才能用，那个时候也没有现在的网络条件，常见的就是一个新闻组，所以他在新闻组里面发布了一个Linux早期版本的通告。</p>
+<p>从一开始，林纳斯就决定自由扩散包括它的源代码。发布后随即Linux立刻引起了很多黑客们的注意，并且通过计算机互联网加入了linux内核开发。这时候林纳斯经完全着迷，不想听停止，决定踢开Minix。于是在1991年10 月5号发布Linux 0.0.2版本,在这个版本中已经可以运行bash 和gcc。由于一批高水平的黑客的加入，使得linux开发迅速蓬勃起来。几乎一两个礼拜就会有新的版本和修正版本出现，所以在93年底到94年初的时候，linux1.0诞生，这个时候linux已经是一个功能很完备的操作系统，而且写得非常的紧凑高效，可以充分发挥硬件的性能，在4m内存的80386的机器上面表现得非常好。</p>
+<p>毫不吹嘘地说，他是一个非常伟大的架构师，并且他同时还有非常大的项目协调管理能力，从那时到现在他一直协调上千人的开发人员一起做linux开发工作，除此以外，他还发起了git，他是主要的开发者，造福千万码农。他性格鲜明，在网上邮件列表中也以火暴的脾气著称，因Nvidia一直没有针对Linux平台发布任何官方的Optimus支持，托瓦兹当众对着镜头竖起了中指，说 ‘So, Nvidia, fuck you!’，在他的领域里，无法容忍废话与缺陷，极致地完美主义者。 </p>
+<p><img src="http://cdn.hexblog.cn/20190527-010.png" srcset="/img/loading.gif" lazyload/></p>
+<h2 id="GNU与Linux"><a href="#GNU与Linux" class="headerlink" title="GNU与Linux"></a>GNU与Linux</h2><p>Linux的历史是和GNU紧密联系在一起的。从1983年开始的GNU计划致力于开发一个自由并且完整的类Unix操作系统，包括软件开发工具和各种应用程序。到1991年 Linux 内核发布的时候，GNU已经几乎完成了除了系统内核之外的各种必备软件的开发。GNU实际上也同时在开发内核，不过他在开发过程中意识了有很多问题，正好是由于linux出现，1992年的时候，林纳斯在GPL v2协议下，发布了0.1.2版的内核，这个使得linux变成自由系统，它填补了GNU系统的一个重要的空白，linux用户在挑选软件方面有非常大的自由，比如说，你今后可以选择几十种不同的命运行外壳和多种的图形的桌面，这个其实Windows的用户感觉很不习惯，linux另外的特点，就是很少崩溃，适合同时间运行多个程序，而且比大部分的操作系统安全，如果你用过windows系统是做过服务器，你能理解Linux为什么是服务器市场上增长最快的操作系统。</p>
+<p><img src="http://cdn.hexblog.cn/20190527-011.png" srcset="/img/loading.gif" lazyload/></p>
+<h2 id="大教堂与市集"><a href="#大教堂与市集" class="headerlink" title="大教堂与市集"></a>大教堂与市集</h2><p>讲一个小插曲，《大教堂与市集》，是埃里克•斯蒂芬•雷蒙（Eric Steven Raymond）所撰写的软件工程方法论，他是以linux这个核心开发过程以及作者自己主持开发的开源代码Fetchmail为讨论案例的，这个文章是1997年5月29号发表的，在1999年他出版成书，他主要讨论两种的，自由软件开发模式，第一种大教堂的模式源代码在软件发行后公开，软件每个版本开发过程中，都是有一个专属的团队所管控的，比如说，GNU Emacs就是。另外一种模式是即集市，代码在开发过程中，就在互联网上公开。供别人查看然后开发，这个是指林纳斯带领linux核心开发为例子，这么做的观点是让足够多的人看到源代码，让错误无所遁形，大教堂模式的软件开发者模式，会让编程排错的的时间大大的增加，因为只有少数的开发者可以参与新的工作。市集的模式正好相反。市集模式也影响了原来采用大教堂模式的GNU Emacs及GCC释放源码。现在看到的场景来说，市集这种设计模式已经无所不在。</p>
+<p><img src="http://cdn.hexblog.cn/20190527-014.jpg" srcset="/img/loading.gif" lazyload/></p>
+<h2 id="BSD与Linux"><a href="#BSD与Linux" class="headerlink" title="BSD与Linux"></a>BSD与Linux</h2><p>最后讲一下BSD。除了GUN以外，还有一个独立进行工程，开发了一个，自由的类型UNINX的操作系统就是BSD，他由UC伯克利开发。在80年代BCD里它还不是自由的，但是他在90年代变成了自由软件，我们现在看到了这些自由的操作系统，如果不是GUN系统派生的，那就是BSD系统派生的，BSD的代码和GNN并不重合，BSD系统现在也使用一些GUN的程序，GUN系统使用了BSD程序是一样的，整体来看，属于独立开发的不同系统。BSD和GUN开发的协议是不一样的。但由于法律因素中，还有些诸多的其他的原因，没让BSD没像GUN流行起来，这么广泛的传播。BSD有很多的分支，比如主流的FreeBSD(最受欢迎的 BSD)、NetBSD(被设计运行在几乎任何架构上)、OpenBSD(为最大化的安全性设计的)。</p>
+<p><img src="http://cdn.hexblog.cn/20190527-012.png" srcset="/img/loading.gif" lazyload/><br>Darwin的是苹果在2000年开放源代码操作系统，在Darwin系统内核中就包括了一个BSD系统，与其他的 BSD 有点不同，虽然底层内核和其他的软件是开源代码(BSD 代码)，但操作系统的大部分是闭源的 Mac OS 代码)。苹果在 BSD 基础上开发了 Mac OS X 和 IOS，这样他们就不必写操作系统底层，就像谷歌在 Linux 基础上开发 android 系统一样。</p>
+<p><img src="http://cdn.hexblog.cn/20190527-013.png" srcset="/img/loading.gif" lazyload/></p>
+
+            </div>
+            <hr>
+            <div>
+              <div class="post-metas mb-3">
+                
+                  <div class="post-meta mr-3">
+                    <i class="iconfont icon-category"></i>
+                    
+                      <a class="hover-with-bg" href="/categories/%E7%A7%91%E6%99%AE%E6%96%87%E7%AB%A0/">科普文章</a>
+                    
+                  </div>
+                
+                
+                  <div class="post-meta">
+                    <i class="iconfont icon-tags"></i>
+                    
+                      <a class="hover-with-bg" href="/tags/linux/">linux</a>
+                    
+                      <a class="hover-with-bg" href="/tags/%E5%8E%86%E5%8F%B2/">历史</a>
+                    
+                      <a class="hover-with-bg" href="/tags/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/">操作系统</a>
+                    
+                  </div>
+                
+              </div>
+              
+                <p class="note note-warning">
+                  
+                    本博客所有文章除特别声明外，均采用 <a target="_blank" href="https://creativecommons.org/licenses/by-sa/4.0/deed.zh" rel="nofollow noopener noopener">CC BY-SA 4.0 协议</a> ，转载请注明出处！
+                  
+                </p>
+              
+              
+                <div class="post-prevnext">
+                  <article class="post-prev col-6">
+                    
+                    
+                      <a href="/2021/04/24/multi-platform-submmit/">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">博客转移成功啦!</span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+              <!-- Comments -->
+              <article class="comments" id="comments" lazyload>
+                
+                  
+                
+                
+  <div id="valine"></div>
+  <script type="text/javascript">
+    Fluid.utils.lazyComments('valine', function() {
+      Fluid.utils.createScript('https://cdn.jsdelivr.net/npm/valine@1.4.14/dist/Valine.min.js', function () {
+        new Valine({
+          el: "#valine",
+          app_id: "9RJgSm5ISmhHWDhfnSkm2Nz4-gzGzoHsz",
+          app_key: "oVYqAPJnDyFT8KFsWzsDJnhx",
+          placeholder: "说点什么",
+          path: window.location.pathname,
+          avatar: "retro",
+          meta: ["nick","mail","link"],
+          pageSize: "10",
+          lang: "zh-CN",
+          highlight: false,
+          recordIP: true,
+          serverURLs: "",
+        });
+      });
+    });
+  </script>
+  <noscript>Please enable JavaScript to view the
+    <a target="_blank" href="https://valine.js.org" rel="nofollow noopener noopener">comments powered by Valine.</a>
+  </noscript>
+
+
+              </article>
+            
+          </article>
+        </div>
+      </div>
+    </div>
+    
+      <div class="d-none d-lg-block col-lg-2 toc-container" id="toc-ctn">
+        <div id="toc">
+  <p class="toc-header"><i class="iconfont icon-list"></i>&nbsp;目录</p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+      </div>
+    
+  </div>
+</div>
+
+<!-- Custom -->
+
+
+    
+
+    
+      <a id="scroll-top-button" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v"
+                 for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+    
+
+    
+  </main>
+
+  <footer class="text-center mt-5 py-3">
+  <div class="footer-content">
+     <i class="iconfont icon-love"></i> 
+  </div>
+  
+  <div class="statistics">
+    
+    
+
+    
+      
+        <!-- LeanCloud 统计PV -->
+        <span id="leancloud-site-pv-container" style="display: none">
+            总访问量 
+            <span id="leancloud-site-pv"></span>
+             次
+          </span>
+      
+      
+        <!-- LeanCloud 统计UV -->
+        <span id="leancloud-site-uv-container" style="display: none">
+            总访客数 
+            <span id="leancloud-site-uv"></span>
+             人
+          </span>
+      
+
+    
+  </div>
+
+
+  
+
+  
+</footer>
+
+
+  <!-- SCRIPTS -->
+  
+  <script  src="https://cdn.jsdelivr.net/npm/nprogress@0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/nprogress@0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://cdn.jsdelivr.net/npm/jquery@3.6.0/dist/jquery.min.js" ></script>
+<script  src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/js/bootstrap.min.js" ></script>
+<script  src="/js/debouncer.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+<!-- Plugins -->
+
+
+  
+    <script  src="/js/img-lazyload.js" ></script>
+  
+
+
+
+  
+
+
+
+  <script  src="https://cdn.jsdelivr.net/npm/tocbot@4.12.2/dist/tocbot.min.js" ></script>
+
+
+
+  <script  src="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@3.5.7/dist/jquery.fancybox.min.js" ></script>
+
+
+
+  <script  src="https://cdn.jsdelivr.net/npm/anchor-js@4.3.0/anchor.min.js" ></script>
+
+
+
+  <script defer src="https://cdn.jsdelivr.net/npm/clipboard@2.0.8/dist/clipboard.min.js" ></script>
+
+
+
+
+  <script defer src="/js/leancloud.js" ></script>
+
+
+
+  <script  src="https://cdn.jsdelivr.net/npm/typed.js@2.0.11/lib/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var title = document.getElementById('subtitle').title;
+      
+      typing(title)
+      
+    })(window, document);
+  </script>
+
+
+
+  <script  src="/js/local-search.js" ></script>
+  <script>
+    (function () {
+      var path = "/local-search.xml";
+      $('#local-search-input').on('click', function() {
+        searchFunc(path, 'local-search-input', 'local-search-result');
+      });
+      $('#modalSearch').on('shown.bs.modal', function() {
+        $('#local-search-input').focus();
+      });
+    })()
+  </script>
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+
+
+
+
+<!-- 主题的启动项 保持在最底部 -->
+<script  src="/js/boot.js" ></script>
+
+
+</body>
+</html>

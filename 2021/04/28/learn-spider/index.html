@@ -1,0 +1,555 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=&#34;auto&#34;>
+
+
+
+<head>
+  <meta charset="UTF-8">
+  <link rel="apple-touch-icon" sizes="76x76" href="/img/favicon.ico">
+  <link rel="icon" href="/img/favicon.ico">
+  <meta name="viewport"
+        content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="description" content="">
+  <meta name="author" content="RemyHe">
+  <meta name="keywords" content="">
+  
+  <title>浅谈爬虫入门 - hexBlog</title>
+
+  <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/css/bootstrap.min.css" />
+
+
+  <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/github-markdown-css@4.0.0/github-markdown.min.css" />
+  <link  rel="stylesheet" href="/lib/hint/hint.min.css" />
+
+  
+    
+    
+      
+      <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/highlight.js@10.7.0/styles/github-gist.min.css" />
+    
+  
+
+  
+    <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@3.5.7/dist/jquery.fancybox.min.css" />
+  
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1749284_ba1fz6golrf.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_kmeydafke9r.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+<!-- 自定义样式保持在最底部 -->
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    var CONFIG = {"hostname":"example.com","root":"/","version":"1.8.9a","typing":{"enable":true,"typeSpeed":60,"cursorChar":"_","loop":false},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"right","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"copy_btn":true,"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":true,"baidu":null,"google":null,"gtag":null,"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":"9RJgSm5ISmhHWDhfnSkm2Nz4-gzGzoHsz","app_key":"oVYqAPJnDyFT8KFsWzsDJnhx","server_url":"https://9rjgsm5i.lc-cn-n1-shared.com"}}};
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+<meta name="generator" content="Hexo 5.4.0"><link rel="alternate" href="/atom.xml" title="hexBlog" type="application/atom+xml">
+</head>
+
+
+<body>
+  <header style="height: 50vh;">
+    <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand"
+       href="/">&nbsp;<strong>Remy He Blog</strong>&nbsp;</a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/">
+                <i class="iconfont icon-home-fill"></i>
+                首页
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/">
+                <i class="iconfont icon-archive-fill"></i>
+                归档
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/categories/">
+                <i class="iconfont icon-category-fill"></i>
+                分类
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/">
+                <i class="iconfont icon-tags-fill"></i>
+                标签
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/">
+                <i class="iconfont icon-user-fill"></i>
+                关于
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" data-toggle="modal" data-target="#modalSearch">&nbsp;<i
+                class="iconfont icon-search"></i>&nbsp;</a>
+          </li>
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" href="javascript:">&nbsp;<i
+                class="iconfont icon-dark" id="color-toggle-icon"></i>&nbsp;</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+    <div class="banner" id="banner" parallax=true
+         style="background: url('/img/default.png') no-repeat center center;
+           background-size: cover;">
+      <div class="full-bg-img">
+        <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+          <div class="page-header text-center fade-in-up">
+            <span class="h2" id="subtitle" title="浅谈爬虫入门">
+              
+            </span>
+
+            
+              <div class="mt-3">
+  
+  
+    <span class="post-meta">
+      <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+      <time datetime="2021-04-28 17:25" pubdate>
+        2021年4月28日 下午
+      </time>
+    </span>
+  
+</div>
+
+<div class="mt-1">
+  
+    
+    <span class="post-meta mr-2">
+      <i class="iconfont icon-chart"></i>
+      2.5k 字
+    </span>
+  
+
+  
+    
+    <span class="post-meta mr-2">
+      <i class="iconfont icon-clock-fill"></i>
+      
+      
+      26
+       分钟
+    </span>
+  
+
+  
+  
+    
+      <!-- LeanCloud 统计文章PV -->
+      <span id="leancloud-page-views-container" class="post-meta" style="display: none">
+        <i class="iconfont icon-eye" aria-hidden="true"></i>
+        <span id="leancloud-page-views"></span> 次
+      </span>
+    
+  
+</div>
+
+            
+          </div>
+
+          
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="d-none d-lg-block col-lg-2"></div>
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div class="py-5" id="board">
+          <article class="post-content mx-auto">
+            <!-- SEO header -->
+            <h1 style="display: none">浅谈爬虫入门</h1>
+            
+            <div class="markdown-body">
+              <h2 id="爬虫原理"><a href="#爬虫原理" class="headerlink" title="爬虫原理"></a>爬虫原理</h2><p><img src="http://cdn.hexblog.cn/20190517-001.png" srcset="/img/loading.gif" lazyload alt="爬虫图片"></p>
+<p>网络抓取程序，俗称“爬虫”，爬虫的基本原理就是获取目标网址，下载网页，通过分析数据中的关键信息，获取资源。爬虫这个实际是翻译自英文的spider, 实际是蜘蛛的意思， 这个比喻很形象，蜘蛛在网上伺机而动，捕获食物。而我们的爬虫程序也就在Inerternet上爬取我们所需要的网络资源。</p>
+<h2 id="作用"><a href="#作用" class="headerlink" title="作用"></a>作用</h2><p>爬虫最重要的作用是充当搜索引擎，最简单的，我们上网浏览网页， 那我把网页都抓下来。建立了一个库，根据你搜的那个关键字（query），给你返回相应的数据，里面当然会根据相关度建立指标，比如比较权威的page rank,有那些权威的网站引用了，那个相关度就增高了。<br> <img src="http://cdn.hexblog.cn/20190517-002.png" srcset="/img/loading.gif" lazyload alt="baidu vs google"><br>百度和谷歌每天都会更新这个库。最早做搜索的时候，有种比较流氓的做法，就是去爬取竞争对手的搜出来的结果， 每个早期公司都会这个做，像之前百度会有参数叫谷歌参数，在搜索权重里面站的参数还比较重。</p>
+<p> 360就更厉害了，干脆把竞争对手直接抓过来后，直接建立一个库，然后返回数据给用户，这个真是比较机智。到后面都占据搜索市场10%以上。当然这里有个法律安全问题。<br> <img src="http://cdn.hexblog.cn/20190517-003.png" srcset="/img/loading.gif" lazyload alt="360"><br>第二个作用是数据统计及分析， 这个范围就更多更广了，举一个很简单的例子，想看看各大招聘网站各类职务信息和热门网站以及薪水，想抓取雪球高回报用户的行为，找出推荐股票等等，我们都可以使用爬虫技术，来给我们收集数据，辅助我们决策。  </p>
+<h2 id="基础知识"><a href="#基础知识" class="headerlink" title="基础知识"></a>基础知识</h2><p>现在我们进入本文的重点， 掌握爬虫技术需要那些知识和学习阶段的建议。</p>
+<h3 id="编程语言"><a href="#编程语言" class="headerlink" title="编程语言"></a>编程语言</h3><p> <img src="http://cdn.hexblog.cn/20190517-004.png" srcset="/img/loading.gif" lazyload alt="python"></p>
+<p>首先入门，需要学习一门编程语言，以Python为例，基础语法、类、函数、数据结构中的list和dict等，跟着例子敲敲，网上资源很多，书籍像《笨办法学Python》， 网站像廖雪峰的个人网站，都是有不错的资源。</p>
+<h3 id="HTTP协议"><a href="#HTTP协议" class="headerlink" title="HTTP协议"></a>HTTP协议</h3><p> <img src="http://cdn.hexblog.cn/20190517-005.png" srcset="/img/loading.gif" lazyload alt="http"><br>爬虫就是通过网络请求从远程服务器下载数据的过程，互联网消息传输的基本协议就是http协议，先了解基本的get，post，delete等方法和编码。慢慢地掌握浏览器是发送http请求向目标站点获取资源信息，熟悉格式规范。<br>网络请求框架都是对 HTTP 协议的实现，Python语言中著名的网络请求库 Requests 就是一个模拟浏览器发送 HTTP 请求的网络库。相当于通过这个库打开的新世界的大门， 我们可以获取网页的源代码。了解 HTTP 协议之后，学有余力，你就可以专门有针对性的学习和网络相关的模块了，Python 自带有 urllib、urllib2（Python3中的urllib），httplib，Cookie等内容，也可以暂时先跳过。把requests的API弄熟。</p>
+<h3 id="Html语言"><a href="#Html语言" class="headerlink" title="Html语言"></a>Html语言</h3><p> <img src="http://cdn.hexblog.cn/20190517-006.png" srcset="/img/loading.gif" lazyload alt="html"><br>很基础的内容，我们要爬取网页，自然需要知道网页使用的技术，知道文档树概念，30分钟就大致了解即可。</p>
+<h3 id="数据格式（HTML文本，-XML-或者Json格式）"><a href="#数据格式（HTML文本，-XML-或者Json格式）" class="headerlink" title="数据格式（HTML文本， XML 或者Json格式）"></a>数据格式（HTML文本， XML 或者Json格式）</h3><p>我们通过网络请求库 Reuests 获得从网站服务器后端发过来数据，数据有可能有不同的格式正确处理这些数据，你要熟悉每种数据类型的解决方案，比如 JSON 数据可以直接使用 Python自带的模块 json等。</p>
+<h3 id="解析工具"><a href="#解析工具" class="headerlink" title="解析工具"></a>解析工具</h3><p>我的的目标信息藏在网页里，那么通过什么方法可以提取呢？传统的方法是使用正则表达式（Python模块中的re），对于Python而言，我们有方便的第三方解析库，可以使用。像Pyquery，BeautifulSoup等，学习方法最快速的无非是看官方文档中的quickstart先熟悉API。推荐使用Pyquery,它模仿Jquery几乎同样的API接口，对DOM操作十分方便。</p>
+<h3 id="数据库知识"><a href="#数据库知识" class="headerlink" title="数据库知识"></a>数据库知识</h3><p> <img src="http://cdn.hexblog.cn/20190517-007.png" srcset="/img/loading.gif" lazyload alt="sql"></p>
+<p>爬取的数据需要持久化，数据库基本知识也需要掌握（MySQL、SQLServer、Oracle、Mongodb等）SQL语言（懂基本的增删改查：add、delete、update、select），时下非关系型数据库很流行，像Mongodb使用起来就简单便利。</p>
+<h3 id="网络抓包-浏览器抓包"><a href="#网络抓包-浏览器抓包" class="headerlink" title="网络抓包/浏览器抓包"></a>网络抓包/浏览器抓包</h3><p> <img src="http://cdn.hexblog.cn/20190517-008.png" srcset="/img/loading.gif" lazyload alt="fiddler"><br>学会使用 Chrome 或者 FireFox 浏览器去审查元素，跟踪请求信息等等，现在大部分网站有配有APP和手机浏览器访问的地址，优先使用这些接口，相对更容易。还有 Fiddler 等代理工具的使用。</p>
+<h3 id="Ajax技术原理"><a href="#Ajax技术原理" class="headerlink" title="Ajax技术原理"></a>Ajax技术原理</h3><p> <img src="http://cdn.hexblog.cn/20190517-009.png" srcset="/img/loading.gif" lazyload alt="ajax"><br>实际上就是浏览器提供了使用 HTTP 协议收发数据的接口，名为 AJAX，这像技术在web应用还比较广泛的，在不重新加载整个页面的情况下，与服务器交换数据并更新部分网页的技术。<br>学习了以上，基本也清晰了整个爬取过程。一般地一个爬虫程序组成部分如首先Downloader 负责下载页面（requests、urllib），其次HTMLParser 负责解析页面（Pyquery   lxml BeautifulSoup），最后是根据业务逻辑获取dataModel字段，完成资源采集。</p>
+<h2 id="爬虫与反爬虫"><a href="#爬虫与反爬虫" class="headerlink" title="爬虫与反爬虫"></a>爬虫与反爬虫</h2><p>当然作为被爬取的一方，我然有我不希望被被人爬取的内容，那限制爬取这些内容一般在robots.txt里。一个文明的爬虫，如搜索引擎的爬虫，首先在网站根目录查看是否有此列表，依此来确认访问范围。<br>以知乎为例www.zhihu.com/robots.txt<br> <img src="http://cdn.hexblog.cn/20190517-010.png" srcset="/img/loading.gif" lazyload alt="robots"><br>以上不允许爬取的内容就是相当于立了牌子，说禁止入内，robots.txt 只是约定，爬虫遵守或者不遵守完全在于爬虫作者的意愿。下面仅从技术的角度尝试探讨，反爬取策略与应对措施。</p>
+<h3 id="User-Agent"><a href="#User-Agent" class="headerlink" title="User-Agent"></a>User-Agent</h3><p>header字段增加User-Agent检测，或者还有部分网站会对Referer进行检测（资源网站的防盗链就是检测Referer）可以直接在爬虫中添加Headers，将浏览器的User-Agent复制到爬虫的Headers中；或者将Referer值修改为目标网站域名。对于检测Headers的反爬虫，在爬虫中修改或者添加Headers就能很好的绕过。</p>
+<h3 id="IP代理池"><a href="#IP代理池" class="headerlink" title="IP代理池"></a>IP代理池</h3><p> 还有部分网站是通过检测用户行为，例如同一IP短时间内多次访问同一页面，或者同一账户短时间内多次进行相同操作。大多数网站都是前一种情况，对于这种情况，使用IP代理就可以解决。可以专门写一个爬虫，爬取网上公开的代理ip，检测后全部保存起来。这样的代理ip爬虫经常会用到，最好自己准备一个。有了大量代理ip后可以每请求几次更换一个ip，这在requests或者urllib2中很容易做到，这样就能很容易的绕过第一种反爬虫。对于第二种情况，可以在每次请求后随机间隔几秒再进行下一次请求。有些有逻辑漏洞的网站，可以通过请求几次，退出登录，重新登录，继续请求来绕过同一账号短时间内不能多次进行相同请求的限制。</p>
+<h3 id="cookies池"><a href="#cookies池" class="headerlink" title="cookies池"></a>cookies池</h3><p> 网站限制一些操作需要在登录的情况下,从存储模块获取用户名称，密码模拟登录，判断登录成功,爬取对应链接带上从cookies池里面随机获得的cookies,完成爬去工作。</p>
+<h3 id="模拟人为操作"><a href="#模拟人为操作" class="headerlink" title="模拟人为操作"></a>模拟人为操作</h3><p> 上述的几种情况大多都是出现在静态页面，还有一部分网站，我们需要爬取的数据是通过ajax请求得到，或者通过JavaScript生成的，像很多页面频繁更新常采用这种方法。首先用需要对网络请求进行分析。如果能够找到ajax请求，也能分析出具体的参数和响应的具体含义，我们就能采用上面的方法，直接利用requests或者urllib2模拟ajax请求，对响应的json进行分析得到需要的数据。能够直接模拟ajax请求获取数据固然是极好的，但是有些网站把ajax请求的所有参数全部加密了。我们根本没办法构造自己所需要的数据的请求。除了加密ajax参数，它还把一些基本的功能都封装了，全部都是在调用自己的接口，而接口参数都是加密的。遇到这样的网站，我们就不能用上面的方法了，方法是selenium+phantomJS框架，调用浏览器内核，并利用phantomJS执行js来模拟人为操作以及触发页面中的js脚本。从填写表单到点击按钮再到滚动页面，全部都可以模拟，不考虑具体的请求和响应过程，只是完完整整的把人浏览页面获取数据的过程模拟一遍。</p>
+<h3 id="验证码"><a href="#验证码" class="headerlink" title="验证码"></a>验证码</h3><p>当爬取操作，被网站判断为异常触发验证码来验证。当然我们python有优秀的图像识别库PIL库，也有识别验证码的库如pytesser,这不是本文重点，如果具体涉及到验证码识别这是算法工程师的事情了，对于一个优秀的爬虫工程师而言，自然是能规避出现验证码的情况。</p>
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>爬虫作为python最容易上手的方向之一，是比较容易让学习者有成就感的。一个网站能够防80%的爬虫已经算是很优秀，毕竟反爬虫可能误伤，降低用户体验。本文梳理了爬虫大概，希望有助于初学者入门。</p>
+
+            </div>
+            <hr>
+            <div>
+              <div class="post-metas mb-3">
+                
+                  <div class="post-meta mr-3">
+                    <i class="iconfont icon-category"></i>
+                    
+                      <a class="hover-with-bg" href="/categories/%E6%8A%80%E6%9C%AF%E6%A6%82%E8%A7%88/">技术概览</a>
+                    
+                  </div>
+                
+                
+                  <div class="post-meta">
+                    <i class="iconfont icon-tags"></i>
+                    
+                      <a class="hover-with-bg" href="/tags/%E7%88%AC%E8%99%AB/">爬虫</a>
+                    
+                  </div>
+                
+              </div>
+              
+                <p class="note note-warning">
+                  
+                    本博客所有文章除特别声明外，均采用 <a target="_blank" href="https://creativecommons.org/licenses/by-sa/4.0/deed.zh" rel="nofollow noopener noopener">CC BY-SA 4.0 协议</a> ，转载请注明出处！
+                  
+                </p>
+              
+              
+                <div class="post-prevnext">
+                  <article class="post-prev col-6">
+                    
+                    
+                      <a href="/2021/04/28/JS-asynchronous/">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">JS的异步与事件循环探微</span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/2021/04/28/how-to-use-git/">
+                        <span class="hidden-mobile">Git入门指南</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+              <!-- Comments -->
+              <article class="comments" id="comments" lazyload>
+                
+                  
+                
+                
+  <div id="valine"></div>
+  <script type="text/javascript">
+    Fluid.utils.lazyComments('valine', function() {
+      Fluid.utils.createScript('https://cdn.jsdelivr.net/npm/valine@1.4.14/dist/Valine.min.js', function () {
+        new Valine({
+          el: "#valine",
+          app_id: "9RJgSm5ISmhHWDhfnSkm2Nz4-gzGzoHsz",
+          app_key: "oVYqAPJnDyFT8KFsWzsDJnhx",
+          placeholder: "说点什么",
+          path: window.location.pathname,
+          avatar: "retro",
+          meta: ["nick","mail","link"],
+          pageSize: "10",
+          lang: "zh-CN",
+          highlight: false,
+          recordIP: true,
+          serverURLs: "",
+        });
+      });
+    });
+  </script>
+  <noscript>Please enable JavaScript to view the
+    <a target="_blank" href="https://valine.js.org" rel="nofollow noopener noopener">comments powered by Valine.</a>
+  </noscript>
+
+
+              </article>
+            
+          </article>
+        </div>
+      </div>
+    </div>
+    
+      <div class="d-none d-lg-block col-lg-2 toc-container" id="toc-ctn">
+        <div id="toc">
+  <p class="toc-header"><i class="iconfont icon-list"></i>&nbsp;目录</p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+      </div>
+    
+  </div>
+</div>
+
+<!-- Custom -->
+
+
+    
+
+    
+      <a id="scroll-top-button" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v"
+                 for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+    
+
+    
+  </main>
+
+  <footer class="text-center mt-5 py-3">
+  <div class="footer-content">
+     <i class="iconfont icon-love"></i> 
+  </div>
+  
+  <div class="statistics">
+    
+    
+
+    
+      
+        <!-- LeanCloud 统计PV -->
+        <span id="leancloud-site-pv-container" style="display: none">
+            总访问量 
+            <span id="leancloud-site-pv"></span>
+             次
+          </span>
+      
+      
+        <!-- LeanCloud 统计UV -->
+        <span id="leancloud-site-uv-container" style="display: none">
+            总访客数 
+            <span id="leancloud-site-uv"></span>
+             人
+          </span>
+      
+
+    
+  </div>
+
+
+  
+
+  
+</footer>
+
+
+  <!-- SCRIPTS -->
+  
+  <script  src="https://cdn.jsdelivr.net/npm/nprogress@0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/nprogress@0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://cdn.jsdelivr.net/npm/jquery@3.6.0/dist/jquery.min.js" ></script>
+<script  src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/js/bootstrap.min.js" ></script>
+<script  src="/js/debouncer.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+<!-- Plugins -->
+
+
+  
+    <script  src="/js/img-lazyload.js" ></script>
+  
+
+
+
+  
+
+
+
+  <script  src="https://cdn.jsdelivr.net/npm/tocbot@4.12.2/dist/tocbot.min.js" ></script>
+
+
+
+  <script  src="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@3.5.7/dist/jquery.fancybox.min.js" ></script>
+
+
+
+  <script  src="https://cdn.jsdelivr.net/npm/anchor-js@4.3.0/anchor.min.js" ></script>
+
+
+
+  <script defer src="https://cdn.jsdelivr.net/npm/clipboard@2.0.8/dist/clipboard.min.js" ></script>
+
+
+
+
+  <script defer src="/js/leancloud.js" ></script>
+
+
+
+  <script  src="https://cdn.jsdelivr.net/npm/typed.js@2.0.11/lib/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var title = document.getElementById('subtitle').title;
+      
+      typing(title)
+      
+    })(window, document);
+  </script>
+
+
+
+  <script  src="/js/local-search.js" ></script>
+  <script>
+    (function () {
+      var path = "/local-search.xml";
+      $('#local-search-input').on('click', function() {
+        searchFunc(path, 'local-search-input', 'local-search-result');
+      });
+      $('#modalSearch').on('shown.bs.modal', function() {
+        $('#local-search-input').focus();
+      });
+    })()
+  </script>
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+
+
+
+
+<!-- 主题的启动项 保持在最底部 -->
+<script  src="/js/boot.js" ></script>
+
+
+</body>
+</html>

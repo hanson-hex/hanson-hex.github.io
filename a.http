@@ -1,0 +1,10 @@
+
+POST https://magentoportal.comm100dev.io/oauth/token
+Content-Type: application/x-www-form-urlencoded
+
+{
+	"grant_type": "password",
+	"client_id": "magentoapp",
+	"email": "saurabh.kashyap2904@comm200.com",
+	"password": "Aa000000"
+}

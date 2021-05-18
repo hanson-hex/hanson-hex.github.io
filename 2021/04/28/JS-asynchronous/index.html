@@ -1,0 +1,627 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=&#34;auto&#34;>
+
+
+
+<head>
+  <meta charset="UTF-8">
+  <link rel="apple-touch-icon" sizes="76x76" href="/img/favicon.ico">
+  <link rel="icon" href="/img/favicon.ico">
+  <meta name="viewport"
+        content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="description" content="">
+  <meta name="author" content="RemyHe">
+  <meta name="keywords" content="">
+  
+  <title>JS的异步与事件循环探微 - hexBlog</title>
+
+  <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/css/bootstrap.min.css" />
+
+
+  <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/github-markdown-css@4.0.0/github-markdown.min.css" />
+  <link  rel="stylesheet" href="/lib/hint/hint.min.css" />
+
+  
+    
+    
+      
+      <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/highlight.js@10.7.0/styles/github-gist.min.css" />
+    
+  
+
+  
+    <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@3.5.7/dist/jquery.fancybox.min.css" />
+  
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1749284_ba1fz6golrf.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_kmeydafke9r.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+<!-- 自定义样式保持在最底部 -->
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    var CONFIG = {"hostname":"example.com","root":"/","version":"1.8.9a","typing":{"enable":true,"typeSpeed":60,"cursorChar":"_","loop":false},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"right","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"copy_btn":true,"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":true,"baidu":null,"google":null,"gtag":null,"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":"9RJgSm5ISmhHWDhfnSkm2Nz4-gzGzoHsz","app_key":"oVYqAPJnDyFT8KFsWzsDJnhx","server_url":"https://9rjgsm5i.lc-cn-n1-shared.com"}}};
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+<meta name="generator" content="Hexo 5.4.0"><link rel="alternate" href="/atom.xml" title="hexBlog" type="application/atom+xml">
+</head>
+
+
+<body>
+  <header style="height: 50vh;">
+    <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand"
+       href="/">&nbsp;<strong>Remy He Blog</strong>&nbsp;</a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/">
+                <i class="iconfont icon-home-fill"></i>
+                首页
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/">
+                <i class="iconfont icon-archive-fill"></i>
+                归档
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/categories/">
+                <i class="iconfont icon-category-fill"></i>
+                分类
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/">
+                <i class="iconfont icon-tags-fill"></i>
+                标签
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/">
+                <i class="iconfont icon-user-fill"></i>
+                关于
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" data-toggle="modal" data-target="#modalSearch">&nbsp;<i
+                class="iconfont icon-search"></i>&nbsp;</a>
+          </li>
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" href="javascript:">&nbsp;<i
+                class="iconfont icon-dark" id="color-toggle-icon"></i>&nbsp;</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+    <div class="banner" id="banner" parallax=true
+         style="background: url('/img/default.png') no-repeat center center;
+           background-size: cover;">
+      <div class="full-bg-img">
+        <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+          <div class="page-header text-center fade-in-up">
+            <span class="h2" id="subtitle" title="JS的异步与事件循环探微">
+              
+            </span>
+
+            
+              <div class="mt-3">
+  
+  
+    <span class="post-meta">
+      <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+      <time datetime="2021-04-28 17:30" pubdate>
+        2021年4月28日 下午
+      </time>
+    </span>
+  
+</div>
+
+<div class="mt-1">
+  
+    
+    <span class="post-meta mr-2">
+      <i class="iconfont icon-chart"></i>
+      3.1k 字
+    </span>
+  
+
+  
+    
+    <span class="post-meta mr-2">
+      <i class="iconfont icon-clock-fill"></i>
+      
+      
+      34
+       分钟
+    </span>
+  
+
+  
+  
+    
+      <!-- LeanCloud 统计文章PV -->
+      <span id="leancloud-page-views-container" class="post-meta" style="display: none">
+        <i class="iconfont icon-eye" aria-hidden="true"></i>
+        <span id="leancloud-page-views"></span> 次
+      </span>
+    
+  
+</div>
+
+            
+          </div>
+
+          
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="d-none d-lg-block col-lg-2"></div>
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div class="py-5" id="board">
+          <article class="post-content mx-auto">
+            <!-- SEO header -->
+            <h1 style="display: none">JS的异步与事件循环探微</h1>
+            
+            <div class="markdown-body">
+              <h2 id="JavaScript起源"><a href="#JavaScript起源" class="headerlink" title="JavaScript起源"></a>JavaScript起源</h2><p>1994年，网景公司（Netscape）发布了Navigator浏览器0.9版。这是历史上第一个比较成熟的网络浏览器，轰动一时。但是，这个版本的浏览器只能用来浏览，不具备与访问者互动的能力。</p>
+<p><img src="http://cdn.hexblog.cn/20190602-002.png" srcset="/img/loading.gif" lazyload/></p>
+<p>网景公司急需一种网页脚本语言，使得浏览器可以与网页互动。1995年JavaScript诞生了,起初名字为Livescript，但是后来网景与Sun公司成立了一个开发联盟。Sun公司那时大肆宣传Java这种语言可以”一次编写，到处运行”（Write Once, Run Anywhere），后面LiveScript改名为JavaScript，本质上来说JavaScript和Java没什么关系（单纯蹭热度）。</p>
+<p><img src="http://cdn.hexblog.cn/20190602-003.jpg" srcset="/img/loading.gif" lazyload/></p>
+<p>如今，JavaScript的用途而是具备了与浏览器窗口及其内容等几乎所有方面交互的能力,已经成为一门功能全面的编程语言。</p>
+<h2 id="同步与异步-阻塞与非阻塞"><a href="#同步与异步-阻塞与非阻塞" class="headerlink" title="同步与异步,阻塞与非阻塞"></a>同步与异步,阻塞与非阻塞</h2><p>计算机领域中的同步（Synchronous）和异步（Asynchronous）和我们生活中的同步和异步的概念是不太一样。生活中的同步，突出的是‘同’，相同的步伐，是咱俩一起行动，比如一起去逛街吃饭饭睡觉觉。异步则是你忙你的，我忙我的，步调不致且互不干扰。到计算机里的同步和异步则关注的是消息通知机制。</p>
+<p>计算机领域所谓同步，就是在发出一个<strong>调用</strong>时，在没有得到结果之前，该<strong>调用</strong>就不返回。但是一旦调用返回，就得到返回值了。<br>换句话说，就是由<strong>调用者</strong>主动等待这个<strong>调用</strong>的结果。</p>
+<p>而异步则是相反，<em>调用</em>在发出之后，这个调用就直接返回了，所以没有返回结果。换句话说，当一个异步过程调用发出后，调用者不会立刻得到结果。而是在<em>调用</em>发出后，<em>被调用者</em>通过状态、通知来通知调用者，或通过回调函数处理这个调用。</p>
+<p>打个比如:以打电话为例,你给小明打电话,问他借本书,如果是同步机制,小明就会说,我看一下哈，不知道有没有,（可能是5秒，也可能是一天）告诉你结果（返回结果）。而异步通信机制，小明直接告诉你我查一下啊,看看我的书柜里面有没有,查好了打电话给你,然后直接挂电话了（不返回结果）。然后查好了，他会主动打电话给你。在这里小明通过“回电”这种方式来回调。</p>
+<p><img src="http://cdn.hexblog.cn/20190602-004.jpg" srcset="/img/loading.gif" lazyload/></p>
+<p>这里需要与阻塞非阻塞做一下区分,阻塞和非阻塞关注的是程序在<strong>等待调用结果（消息，返回值）时的状态</strong>.</p>
+<p>阻塞调用是指调用结果返回之前，当前线程会被挂起。调用线程只有在得到结果之后才会返回。非阻塞调用指在不能立刻得到结果之前，该调用不会阻塞当前线程。</p>
+<p><img src="http://cdn.hexblog.cn/20190602-007.jpg" srcset="/img/loading.gif" lazyload/></p>
+<p>还是上面的例子，你打电话问小明有书借没，你如果是阻塞式调用，你会一直把自己“挂起”，直到得到这本书有没有的结果，如果是非阻塞式调用，你不管小明有没有告诉你，你自己先一边去玩了， 当然你也要偶尔过几分钟check一下小明有没有返回结果。在这里阻塞与非阻塞与是否同步异步无关。跟小明通过什么方式回答你结果无关。</p>
+<h2 id="JavaScript-Engine-Js-引擎"><a href="#JavaScript-Engine-Js-引擎" class="headerlink" title="JavaScript Engine(Js 引擎)"></a>JavaScript Engine(Js 引擎)</h2><p>js 引擎即 js 虚拟机，主要是负责解析和执行 js 的，它是浏览器所实现的，不同的浏览器有不同的实现方式「采用 c/c++ 实现」，这里以比较流行V8引擎为例来说明<br>该引擎包括两个主要组件：</p>
+<ul>
+<li><p>Memory Heap 内存堆 ——  这是内存分配发生的地方</p>
+</li>
+<li><p>Call Stack 调用堆栈 ——  这是在你代码执行时栈帧存放的位置(js 是单线程说的就是 call stack)</p>
+</li>
+</ul>
+<p><img src="http://cdn.hexblog.cn/20190531-001.png" srcset="/img/loading.gif" lazyload/></p>
+<p>作为浏览器脚本语言，JavaScript的主要用途是与用户互动，以及操作DOM。这决定了它只能是单线程。<br>浏览器有渲染引擎和 js引擎，浏览器是从上向下解析 html 标签的，当遇到 script 标签(js 代码)时会立即停止解析，直接执行 js 脚本，所以渲染引擎和 js 引擎是互斥的(js 操作 DOM 的会影响渲染)，这一个过程是同步的，所以加载一个耗时的 js 会导致界面卡死的，影响用户体验。</p>
+<p>另外假定js同时有两个线程，一个线程在某个DOM节点上添加内容，另一个线程删除了这个节点，这时浏览器应该以哪个线程为准？<br>所以，为了避免复杂性，从一诞生，Js就是单线程，这已经成这门语言的核心特征，将来也不会改变。</p>
+<blockquote>
+<p>注:webworker支持多线程,但是不能访问DOM。</p>
+</blockquote>
+<h2 id="Call-Stack-调用栈"><a href="#Call-Stack-调用栈" class="headerlink" title="Call Stack(调用栈)"></a>Call Stack(调用栈)</h2><p>先上代码<br><figure class="highlight sas"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><code class="hljs sas">function multiply(<span class="hljs-meta">x</span>, y) &#123;<br>    <span class="hljs-meta">return</span> <span class="hljs-meta">x</span> <span class="hljs-comment">* y;</span><br>&#125;<br>function printSquare(<span class="hljs-meta">x</span>) &#123;<br>    var s = multiply(<span class="hljs-meta">x</span>, <span class="hljs-meta">x</span>);<br>    console<span class="hljs-meta">.log(</span>s);<br>&#125;<br>printSquare(5);<br></code></pre></td></tr></table></figure></p>
+<p>当引擎开始执行这个代码时，call stack将会变成空的。之后，执行的步骤如下：</p>
+<p><img src="http://cdn.hexblog.cn/20190531-003.png" srcset="/img/loading.gif" lazyload/></p>
+<p>call stack的每个入口被称为 stack frame（栈帧）。顾名思义,栈即遵循先进先出原则，当一个方法调用的时候就入栈，执行完成以后就出栈。</p>
+<h2 id="Web-APIs"><a href="#Web-APIs" class="headerlink" title="Web APIs"></a>Web APIs</h2><p>看完前面的铺垫你是否会产生这些疑问，由于 js 引擎中的 call stack同一时间只能干一件事情，那么他是如何是实现异步操作的？<br>因为Js引擎只能自上而下执行,万一上一行解析时间很长,调用者一直等待着结果的返回,那么下面的代码不就被阻塞了么。</p>
+<p> 答案是虽然 js 是单线程的，但浏览器却是多线程的，我们知道 js 有好多 API 有些不是核心 js 语言的一部分，比如 BOM DOM AJAX setTimeOut Canvas WegGl 等 api 浏览器可以在调用之外执行这些 api(另起一个或多个线程跑这些 api)</p>
+<p><img src="http://cdn.hexblog.cn/20190602-005.jpg" srcset="/img/loading.gif" lazyload/></p>
+<p>这些 api 就可以独立于调用栈call stack来执行自己的功能，但是有一个问题是如果这些 api 执行完以后该怎么办呢？有两种方案</p>
+<ol>
+<li>我们将 web api 完成的方法直接推送到调用栈call stack</li>
+<li>我们采取一些机制来保存这些响应，在合适的时候推送给调用栈</li>
+</ol>
+<p>第 1 种方法显然不靠谱，如果 web api 执行完以后直接把结果给调用栈可以会影响正在执行的调用栈，所以浏览器采用第二种方法，使用消息队列来保存这些 web api 执行的响应以便在调用栈可以调用的时候推送给调用栈，这个保存消息的东西就是接下来我们要说的 Message Queue</p>
+<h2 id="Message-Queue-回调队列"><a href="#Message-Queue-回调队列" class="headerlink" title="Message Queue(回调队列)"></a>Message Queue(回调队列)</h2><p>Message Queue(消息队列也叫 Callback Queue)是用来保存 Web Api 调用完成以后的所有消息的回调函数，当call stack为空时(也就是调用栈中的方法执行完毕以后)Message Queue 中的回调方法(先进先出)会被添加到call stack 中去执行，但是浏览器是什么方式来把调用栈和 message Queue 联系起来的「什么机制把 Message Queue 中的回调方法给 call stack 当 call stack 为空的时候」，它就是 Event Loop</p>
+<p><img src="http://cdn.hexblog.cn/20190602-006.jpg" srcset="/img/loading.gif" lazyload/></p>
+<h2 id="Event-Loop-事件循环"><a href="#Event-Loop-事件循环" class="headerlink" title="Event Loop(事件循环)"></a>Event Loop(事件循环)</h2><p>Event Loop 是把 call stack 和 Message Queue 联系起来的纽带和桥梁，Event Loop 是一个基于事件的并发模型，它时刻在监听着消息队列，如果有完成的消息它此刻还要关心 call stack 是否为空，如果为空则把 Messag Queue 中的回调结果推送给 call statck 回调方法执行<br>Event Loop 做两件事情<br>1、监听 Message Queue(是否有消息)<br>2、监听 call statck (看是否为空，如果为空则推送结果)</p>
+<p><img src="http://cdn.hexblog.cn/20190531-002.png" srcset="/img/loading.gif" lazyload/></p>
+<p>经典问题：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><code class="hljs javascript"> <span class="hljs-built_in">console</span>.log(<span class="hljs-string">&#x27;1&#x27;</span>)<br><span class="hljs-built_in">setTimeout</span>(<span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params"></span>)</span>&#123;<br> <span class="hljs-built_in">console</span>.log(<span class="hljs-string">&#x27;2&#x27;</span>)<br>&#125;, <span class="hljs-number">0</span>)<br><span class="hljs-built_in">console</span>.log(<span class="hljs-string">&#x27;3&#x27;</span>)  <br><span class="hljs-comment">//       1，3，2</span><br></code></pre></td></tr></table></figure>
+<p>我们来分析一下,当上面的代码加载在浏览器中步骤是什么样子:</p>
+<ol>
+<li>console.log(‘1’)被推到调用栈中然后当结束时从栈中被移除。</li>
+<li>接下来setTimeOut( )函数被调用，所以它被推到了栈顶。setTimeOut( )有两个参数：一是回调，二是毫秒数。</li>
+<li>浏览器单独开一个线程去执行这个setTimeOut( )方法在web APIs环境中开始了一个0秒的计时器此时，setTimeOut( )执行完毕并被移出栈。</li>
+<li>console.log(‘3’)被推到栈里，执行完后被移除。</li>
+<li>web api 执行 setTimeout 方法完毕，将结果给 Message Queue ，此是 web api 就变成空的，<br>栈也已经变成空的，Event Loop 监听着 Message Queue。</li>
+<li>Event loop 把 Message Queue 中的方法取出来，推给空的调用栈.</li>
+<li>执行其中的方法体 console.log(‘2’)， 执行完毕 出栈，调用栈变为空</li>
+</ol>
+<h2 id="宏任务与微任务"><a href="#宏任务与微任务" class="headerlink" title="宏任务与微任务"></a>宏任务与微任务</h2><p>以上的Event Loop过程是一个宏观的表述，实际上因为异步任务之间并不相同，因此他们的执行优先级也有区别。不同的异步任务被分为两类：微任务（micro task）和宏任务（macro task）。</p>
+<p>以下事件属于宏任务：</p>
+<ul>
+<li>setInterval()</li>
+<li>setTimeout()</li>
+<li>setImmediate()</li>
+<li>I/O</li>
+</ul>
+<p>以下事件属于微任务:</p>
+<ul>
+<li>process.nextTick()</li>
+<li>new Promise()(有些实现的promise 将 then 方法放到了宏任务中，浏览器默认放到了微任务)</li>
+<li>Object.observe (已废弃)</li>
+<li>MutationObserver（不兼容，已废弃）</li>
+<li>MessageChannel（vue中 nextClick 实现原理）</li>
+</ul>
+<p>前面我们介绍过，在一个Event Loop中，异步事件返回结果后会被放到一个Message Queue中。然而，根据这个异步事件的类型，这个事件实际上会被对应的宏任务队列或者微任务队列中去。并且在当前执行栈为空的时候，主线程会 查看微任务队列是否有事件存在。如果不存在，那么再去宏任务队列中取出一个事件并把对应的回到加入当前执行栈；如果存在，则会依次执行队列中事件对应的回调，直到微任务队列为空，然后去宏任务队列中取出最前面的一个事件，把对应的回调加入当前执行栈…如此反复，进入循环。</p>
+<p>我们只需记住当当前执行栈执行完毕时会立刻先处理所有微任务队列中的事件，然后再去宏任务队列中取出一个事件。同一次Event Loop中，微任务永远在宏任务之前执行。</p>
+<p>这样就能解释下面这段代码的结果：<br><figure class="highlight livescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><code class="hljs livescript"><span class="hljs-built_in">setTimeout</span>(<span class="hljs-keyword">function</span> () &#123;<br>    <span class="hljs-built_in">console</span>.log(<span class="hljs-number">1</span>);<br>&#125;);<br><br><span class="hljs-keyword">new</span> <span class="hljs-built_in">Promise</span>(<span class="hljs-keyword">function</span>(resolve,reject)&#123;<br>    <span class="hljs-built_in">console</span>.log(<span class="hljs-number">2</span>)<br>    resolve(<span class="hljs-number">3</span>)<br>&#125;).<span class="hljs-keyword">then</span>(<span class="hljs-keyword">function</span>(val)&#123;<br>    <span class="hljs-built_in">console</span>.log(val);<br>&#125;)<br><span class="hljs-comment"># 2</span><br><span class="hljs-comment"># 3</span><br><span class="hljs-comment"># 1</span><br></code></pre></td></tr></table></figure></p>
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>到此我们把 js 非阻塞和异步,Call back 与Event Loop原理有所了解，现在总结一下</p>
+<ol>
+<li>同步指的是发起调用后，调用方主动等待调用结果；异步指的是,发起调用后，调用者没有立刻得到返回结果,后续可通过回调等方式获取其结果。</li>
+<li>阻塞关注的是等待调用结果时的状态,若线程挂起，等待结果返回就是阻塞.若调用在不能立刻得到结果之前，该调用不会阻塞当前线程会立刻返回则是非阻塞</li>
+<li>js 是非阻塞异步的单线程(单线程指的就是 Call stack)</li>
+<li>js 实现异步的方式是基于 Event Loop 的并发模型</li>
+<li>浏览器的 web api 不是 js 核心的部分，但是和 call stack 不冲突执行(浏览器另外开线程去执)</li>
+<li>web api 的执行结果不能直接给 call stack 先要通过 Message Queu 把结果存起来，等待 Event Loop 去处理</li>
+<li>Event Loop 如果发现 call statck 为空时「此时就是推入 Message Queue 中的消息的最佳时机」取出消息队列中的消息推入给调用栈，异步结束</li>
+<li>Message Queue分两种宏任务消息队列,微任务消息队列,同一次Event Loop中，微任务永远在宏任务之前执行</li>
+</ol>
+<h2 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h2><ul>
+<li><a target="_blank" rel="noopener" href="https://www.jianshu.com/p/e865c3a7ba10">https://www.jianshu.com/p/e865c3a7ba10</a></li>
+<li><a target="_blank" rel="noopener" href="https://juejin.im/post/5c9de08e51882568093c1e9d">https://juejin.im/post/5c9de08e51882568093c1e9d</a></li>
+</ul>
+
+            </div>
+            <hr>
+            <div>
+              <div class="post-metas mb-3">
+                
+                  <div class="post-meta mr-3">
+                    <i class="iconfont icon-category"></i>
+                    
+                      <a class="hover-with-bg" href="/categories/%E5%8E%9F%E7%90%86%E6%8E%A2%E7%B4%A2/">原理探索</a>
+                    
+                  </div>
+                
+                
+                  <div class="post-meta">
+                    <i class="iconfont icon-tags"></i>
+                    
+                      <a class="hover-with-bg" href="/tags/JS/">JS</a>
+                    
+                      <a class="hover-with-bg" href="/tags/%E5%BC%82%E6%AD%A5/">异步</a>
+                    
+                      <a class="hover-with-bg" href="/tags/%E4%BA%8B%E4%BB%B6%E5%BE%AA%E7%8E%AF/">事件循环</a>
+                    
+                  </div>
+                
+              </div>
+              
+                <p class="note note-warning">
+                  
+                    本博客所有文章除特别声明外，均采用 <a target="_blank" href="https://creativecommons.org/licenses/by-sa/4.0/deed.zh" rel="nofollow noopener noopener">CC BY-SA 4.0 协议</a> ，转载请注明出处！
+                  
+                </p>
+              
+              
+                <div class="post-prevnext">
+                  <article class="post-prev col-6">
+                    
+                    
+                      <a href="/2021/04/28/js-this-call-apply/">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">Javascript中的this、call、apply、bind的理解与应用</span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/2021/04/28/learn-spider/">
+                        <span class="hidden-mobile">浅谈爬虫入门</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+              <!-- Comments -->
+              <article class="comments" id="comments" lazyload>
+                
+                  
+                
+                
+  <div id="valine"></div>
+  <script type="text/javascript">
+    Fluid.utils.lazyComments('valine', function() {
+      Fluid.utils.createScript('https://cdn.jsdelivr.net/npm/valine@1.4.14/dist/Valine.min.js', function () {
+        new Valine({
+          el: "#valine",
+          app_id: "9RJgSm5ISmhHWDhfnSkm2Nz4-gzGzoHsz",
+          app_key: "oVYqAPJnDyFT8KFsWzsDJnhx",
+          placeholder: "说点什么",
+          path: window.location.pathname,
+          avatar: "retro",
+          meta: ["nick","mail","link"],
+          pageSize: "10",
+          lang: "zh-CN",
+          highlight: false,
+          recordIP: true,
+          serverURLs: "",
+        });
+      });
+    });
+  </script>
+  <noscript>Please enable JavaScript to view the
+    <a target="_blank" href="https://valine.js.org" rel="nofollow noopener noopener">comments powered by Valine.</a>
+  </noscript>
+
+
+              </article>
+            
+          </article>
+        </div>
+      </div>
+    </div>
+    
+      <div class="d-none d-lg-block col-lg-2 toc-container" id="toc-ctn">
+        <div id="toc">
+  <p class="toc-header"><i class="iconfont icon-list"></i>&nbsp;目录</p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+      </div>
+    
+  </div>
+</div>
+
+<!-- Custom -->
+
+
+    
+
+    
+      <a id="scroll-top-button" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v"
+                 for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+    
+
+    
+  </main>
+
+  <footer class="text-center mt-5 py-3">
+  <div class="footer-content">
+     <i class="iconfont icon-love"></i> 
+  </div>
+  
+  <div class="statistics">
+    
+    
+
+    
+      
+        <!-- LeanCloud 统计PV -->
+        <span id="leancloud-site-pv-container" style="display: none">
+            总访问量 
+            <span id="leancloud-site-pv"></span>
+             次
+          </span>
+      
+      
+        <!-- LeanCloud 统计UV -->
+        <span id="leancloud-site-uv-container" style="display: none">
+            总访客数 
+            <span id="leancloud-site-uv"></span>
+             人
+          </span>
+      
+
+    
+  </div>
+
+
+  
+
+  
+</footer>
+
+
+  <!-- SCRIPTS -->
+  
+  <script  src="https://cdn.jsdelivr.net/npm/nprogress@0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/nprogress@0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://cdn.jsdelivr.net/npm/jquery@3.6.0/dist/jquery.min.js" ></script>
+<script  src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/js/bootstrap.min.js" ></script>
+<script  src="/js/debouncer.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+<!-- Plugins -->
+
+
+  
+    <script  src="/js/img-lazyload.js" ></script>
+  
+
+
+
+  
+
+
+
+  <script  src="https://cdn.jsdelivr.net/npm/tocbot@4.12.2/dist/tocbot.min.js" ></script>
+
+
+
+  <script  src="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@3.5.7/dist/jquery.fancybox.min.js" ></script>
+
+
+
+  <script  src="https://cdn.jsdelivr.net/npm/anchor-js@4.3.0/anchor.min.js" ></script>
+
+
+
+  <script defer src="https://cdn.jsdelivr.net/npm/clipboard@2.0.8/dist/clipboard.min.js" ></script>
+
+
+
+
+  <script defer src="/js/leancloud.js" ></script>
+
+
+
+  <script  src="https://cdn.jsdelivr.net/npm/typed.js@2.0.11/lib/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var title = document.getElementById('subtitle').title;
+      
+      typing(title)
+      
+    })(window, document);
+  </script>
+
+
+
+  <script  src="/js/local-search.js" ></script>
+  <script>
+    (function () {
+      var path = "/local-search.xml";
+      $('#local-search-input').on('click', function() {
+        searchFunc(path, 'local-search-input', 'local-search-result');
+      });
+      $('#modalSearch').on('shown.bs.modal', function() {
+        $('#local-search-input').focus();
+      });
+    })()
+  </script>
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+
+
+
+
+<!-- 主题的启动项 保持在最底部 -->
+<script  src="/js/boot.js" ></script>
+
+
+</body>
+</html>
